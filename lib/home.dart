@@ -13,29 +13,24 @@ class _HomeState extends State<Home> {
   var user;
 
   var dio = Dio();
-  int userId = 1;
-  String id = 'asd';
-  String title = "hihi";
-  bool completed = true;
+  String text = " ";
+  int userId;
+  int id;
+  String title;
+  bool completed;
 
-  String baseUrl = 'https://jsonplaceholder.typicode.com/todos/1';
+  String baseUrl =
+      'https://jsonplaceholder.typicode.com/todos/1?fbclid=IwAR393NYfJlznxRQMR_9_2raljvo-x9ARHH_h-PEB23U8SH23F7nj6nMqyA0';
 
   // Future<String> getHttp1() async {
   //   User.fromJson(baseUrl);
   // }
 
-  Future<String> getHttp() async {
+  Future<User> getHttp() async {
     try {
       Response response = await dio.get(baseUrl);
 
-      Map data = jsonDecode(response.toString());
-
-      id = data['id'];
-      userId = data['userId'];
-      title = data['title'].toString();
-      completed = data['completed'];
-
-      user = User(id: id, userId: userId, title: title, completed: completed);
+      return User.fromJson(response.data);
     } catch (e) {
       print(e);
     }
@@ -58,7 +53,13 @@ class _HomeState extends State<Home> {
             RaisedButton(
               color: Colors.green,
               onPressed: () {
-                print(user.toJson()["id"]);
+                getHttp().then((r) {
+                  setState(() {
+                    text = r.toString();
+                  });
+                });
+                print(text);
+                // print(user.toJson()["id"]);
               },
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
@@ -67,7 +68,7 @@ class _HomeState extends State<Home> {
                 style: TextStyle(color: Colors.white),
               ),
             ),
-            Text(id)
+            Text(text)
           ],
         ),
       ),
